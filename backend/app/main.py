@@ -1,9 +1,16 @@
 from sqlalchemy.orm import Session
 from app.database import engine, SessionLocal
 from app import models
-from app.security import hash_password, verify_password
+from app.security import hash_password, verify_password, create_access_token, decode_access_token, encrypt_password, decrypt_password
 from fastapi import FastAPI, Depends, HTTPException 
-from app.schemas import UserCreate, UserLogin
+from app.schemas import UserCreate, UserLogin, VaultEntryCreate, VaultEntryUpdate
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+app = FastAPI(
+    title="SecureVault API",
+    description="Backend API for the SecureVault password manager",
+    version="1.0.0"
+)
+security = HTTPBearer()
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -28,6 +35,21 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    token = credentials.credentials
+
+    payload = decode_access_token(token)
+
+    if payload is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    return payload
 
 @app.post("/api/register")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
@@ -78,8 +100,115 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             detail="Invalid email or password"
         )
 
+    access_token = create_access_token(
+        data={"sub": str(db_user.id), "email": db_user.email}
+    )
+
     return {
         "message": "Login successful",
-        "id": db_user.id,
-        "email": db_user.email
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+@app.get("/api/me")
+def get_me(current_user: dict = Depends(get_current_user)):
+    return {
+        "id": current_user["sub"],
+        "email": current_user["email"]
+    }
+@app.post("/api/vault")
+def create_vault_entry(
+    entry: VaultEntryCreate,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    encrypted = encrypt_password(entry.password)
+
+    new_entry = models.VaultEntry(
+        user_id=int(current_user["sub"]),
+        website=entry.website,
+        username=entry.username,
+        encrypted_password=encrypted
+    )
+
+    db.add(new_entry)
+    db.commit()
+    db.refresh(new_entry)
+
+    return {
+        "message": "Password saved successfully",
+        "id": new_entry.id,
+        "website": new_entry.website,
+        "username": new_entry.username
+    }
+@app.get("/api/vault")
+def get_vault_entries(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    entries = db.query(models.VaultEntry).filter(
+        models.VaultEntry.user_id == int(current_user["sub"])
+    ).all()
+
+    return [
+        {
+            "id": entry.id,
+            "website": entry.website,
+            "username": entry.username,
+            "password": decrypt_password(entry.encrypted_password)
+        }
+        for entry in entries
+    ]
+@app.delete("/api/vault/{entry_id}")
+def delete_vault_entry(
+    entry_id: int,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    entry = db.query(models.VaultEntry).filter(
+        models.VaultEntry.id == entry_id,
+        models.VaultEntry.user_id == int(current_user["sub"])
+    ).first()
+
+    if not entry:
+        raise HTTPException(
+            status_code=404,
+            detail="Vault entry not found"
+        )
+
+    db.delete(entry)
+    db.commit()
+
+    return {
+        "message": "Password deleted successfully"
+    }
+@app.put("/api/vault/{entry_id}")
+def update_vault_entry(
+    entry_id: int,
+    updated_entry: VaultEntryUpdate,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    entry = db.query(models.VaultEntry).filter(
+        models.VaultEntry.id == entry_id,
+        models.VaultEntry.user_id == int(current_user["sub"])
+    ).first()
+
+    if not entry:
+        raise HTTPException(
+            status_code=404,
+            detail="Vault entry not found"
+        )
+
+    entry.website = updated_entry.website
+    entry.username = updated_entry.username
+    entry.encrypted_password = encrypt_password(updated_entry.password)
+
+    db.commit()
+    db.refresh(entry)
+
+    return {
+        "message": "Password updated successfully",
+        "id": entry.id,
+        "website": entry.website,
+        "username": entry.username
     }
