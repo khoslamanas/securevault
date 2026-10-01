@@ -5,6 +5,8 @@ from app.security import hash_password, verify_password, create_access_token, de
 from fastapi import FastAPI, Depends, HTTPException 
 from app.schemas import UserCreate, UserLogin, VaultEntryCreate, VaultEntryUpdate
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import secrets
+import string
 app = FastAPI(
     title="SecureVault API",
     description="Backend API for the SecureVault password manager",
@@ -212,3 +214,28 @@ def update_vault_entry(
         "website": entry.website,
         "username": entry.username
     }
+@app.get("/api/generate-password")
+def generate_password(length: int = 16):
+    if length < 12 or length > 128:
+        raise HTTPException(
+            status_code=400,
+            detail="Password length must be between 12 and 128"
+        )
+
+    characters = string.ascii_letters + string.digits + "!@#$%^&*"
+
+    while True:
+        password = "".join(
+            secrets.choice(characters)
+            for _ in range(length)
+        )
+
+        if (
+            any(c.islower() for c in password)
+            and any(c.isupper() for c in password)
+            and any(c.isdigit() for c in password)
+            and any(c in "!@#$%^&*" for c in password)
+        ):
+            break
+
+    return {"password": password}

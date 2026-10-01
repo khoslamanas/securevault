@@ -16,7 +16,7 @@ def hash_password(password: str) -> str:
     hashed_password = bcrypt.hashpw(password_bytes, salt)
     return hashed_password.decode("utf-8")
 
-SECRET_KEY = "change-this-later"
+SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
