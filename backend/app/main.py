@@ -215,14 +215,30 @@ def update_vault_entry(
         "username": entry.username
     }
 @app.get("/api/generate-password")
-def generate_password(length: int = 16):
+def generate_password(
+    length: int = 16,
+    include_numbers: bool = True,
+    include_symbols: bool = True,
+    current_user: dict = Depends(get_current_user)
+):
     if length < 12 or length > 128:
         raise HTTPException(
             status_code=400,
             detail="Password length must be between 12 and 128"
         )
 
-    characters = string.ascii_letters + string.digits + "!@#$%^&*"
+    required = [
+        string.ascii_lowercase,
+        string.ascii_uppercase
+    ]
+
+    if include_numbers:
+        required.append(string.digits)
+
+    if include_symbols:
+        required.append("!@#$%^&*")
+
+    characters = "".join(required)
 
     while True:
         password = "".join(
@@ -230,11 +246,9 @@ def generate_password(length: int = 16):
             for _ in range(length)
         )
 
-        if (
-            any(c.islower() for c in password)
-            and any(c.isupper() for c in password)
-            and any(c.isdigit() for c in password)
-            and any(c in "!@#$%^&*" for c in password)
+        if all(
+            any(char in group for char in password)
+            for group in required
         ):
             break
 
