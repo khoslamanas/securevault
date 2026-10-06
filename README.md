@@ -3,7 +3,9 @@
 SecureVault is a full-stack password manager built with **React, FastAPI, PostgreSQL, and Python**. It allows users to securely create an account, authenticate, and manage encrypted password entries through a modern web interface.
 
 This project was built as a cybersecurity-focused portfolio project to demonstrate full-stack development, authentication, encryption, database management, API security, and automated testing.
+## 🖥️ Application Preview
 
+![SecureVault Dashboard](screenshots/securevault-dashboard.png)
 ## ✨ Features
 
 - User registration and login
