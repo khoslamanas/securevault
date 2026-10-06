@@ -363,6 +363,7 @@ function App() {
             <div className="vault-search">
   <input
     type="text"
+    className="search-input"
     placeholder="Search passwords..."
     value={searchTerm}
     onChange={(event) => setSearchTerm(event.target.value)}
