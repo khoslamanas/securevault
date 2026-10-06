@@ -1,0 +1,254 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0b1120;
+  color: #ffffff;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #111827;
+  border: 1px solid #263244;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.logo {
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.login-card h1 {
+  text-align: center;
+  margin: 0;
+  font-size: 32px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #94a3b8;
+  margin: 10px 0 32px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 13px 14px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: #38bdf8;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 8px;
+  background: #0284c7;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0369a1;
+}
+
+.register-text {
+  text-align: center;
+  margin-top: 24px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+.register-text a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+}
+.dashboard {
+  min-height: 100vh;
+  background: #0b1120;
+  padding: 40px 60px;
+}
+
+.dashboard-header {
+  max-width: 1100px;
+  margin: 0 auto 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.dashboard-header p {
+  margin: 6px 0 0;
+  color: #94a3b8;
+}
+
+.logout-button {
+  width: auto;
+  padding: 10px 20px;
+  margin: 0;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+.logout-button:hover {
+  background: #334155;
+}
+
+.vault-container {
+  max-width: 1100px;
+  margin: auto;
+  background: #111827;
+  border: 1px solid #263244;
+  border-radius: 16px;
+  padding: 30px;
+}
+
+.vault-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vault-title h2 {
+  margin: 0;
+}
+
+.vault-title p {
+  color: #94a3b8;
+  margin: 7px 0 0;
+}
+
+.vault-title button {
+  width: auto;
+  padding: 11px 18px;
+}
+
+.empty-vault {
+  margin-top: 30px;
+  padding: 70px 20px;
+  text-align: center;
+  border: 1px dashed #334155;
+  border-radius: 12px;
+  background: #0f172a;
+}
+
+.empty-icon {
+  font-size: 40px;
+}
+
+.empty-vault h3 {
+  margin: 16px 0 8px;
+}
+
+.empty-vault p {
+  color: #94a3b8;
+  margin: 0;
+}
+
+.vault-list {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vault-entry {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.vault-entry h3 {
+  margin: 0 0 6px;
+  font-size: 19px;
+}
+
+.vault-entry p {
+  margin: 0 0 16px;
+  color: #94a3b8;
+}
+
+.vault-entry button {
+  width: auto;
+  padding: 8px 14px;
+  margin: 12px 8px 0 0;
+  font-size: 14px;
+}
+
+.vault-entry span {
+  font-family: monospace;
+  margin-right: 10px;
+}
+.add-password-form {
+  margin-top: 25px;
+  padding: 24px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+}
+
+.add-password-form h3 {
+  margin-top: 0;
+  margin-bottom: 22px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-actions button {
+  width: auto;
+  padding: 10px 18px;
+}
+
+.cancel-button {
+  background: #334155;
+}
+
+.cancel-button:hover {
+  background: #475569;
+}
